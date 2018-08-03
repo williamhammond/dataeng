@@ -16,5 +16,5 @@ def get_enigma_data(dataset_id, api_key):
     url = base_url + 'export/{}'.format(snapshot_id)
     dat = requests.get(url, headers=headers).content.decode('utf-8')
 
-    return r
+    return dat
 
