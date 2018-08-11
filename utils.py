@@ -2,6 +2,8 @@ import requests
 from requests.exceptions import HTTPError
 import os
 import csv
+import io
+import pandas as pd
 
 def get_enigma_data(dataset_id, api_key):
     """
@@ -31,7 +33,9 @@ def get_enigma_data(dataset_id, api_key):
     return dat
 
 def main():
-    get_enigma_data('b2cda379-c500-4ef5-aa2a-2dfae29e3aff', os.environ["ENIGMA_API_KEY"])
+    d = get_enigma_data('f93ffd80-6679-4a76-a86e-2ab1f4007815', os.environ['ENIGMA_API_KEY'])
+    df = pd.read_csv(io.StringIO(d))
+    print df
 
 if __name__ == "__main__":
     main()
