@@ -18,3 +18,8 @@ def get_enigma_data(dataset_id, api_key):
 
     return dat
 
+def main():
+    get_enigma_data('', os.environ["ENIGMA_API_KEY"])
+
+if __name__ == "__main__":
+    main()
