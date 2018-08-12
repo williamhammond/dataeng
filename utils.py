@@ -7,6 +7,7 @@ import warnings
 import requests
 from requests.exceptions import HTTPError
 import pandas as pd
+import geopy
 from geopy import geocoders
 import matplotlib
 import matplotlib.pyplot as plt
@@ -48,12 +49,24 @@ def get_coords(dat):
     get_coords appends the coordinates as rows to the data set using the
     google maps api
     """
+    geopy.geocoders.options.default_timeout = 3
     g_coder = geocoders.GoogleV3(os.environ['GOOGLE_API_KEY'])
 
-    locations = dat['event_location'].apply(g_coder.geocode)
-    dat.loc[:, 'long'] = [location.longitude for location in locations]
-    dat.loc[:, 'lat'] = [location.latitude for location in locations]
+    bad_rows = []
+    for i, row in dat.iterrows():
+        try:
+            location = g_coder.geocode(row['event_location'])
+            if not location:
+                bad_rows.append(i)
+            else:
+                dat.loc[i, 'long'] = location.longitude
+                dat.loc[i, 'lat'] = location.latitude
+        except Exception as e:
+            print e
+            bad_rows.append(i)
 
+    # Remove rows that couldn't geocode due to bad event location
+    dat.drop(dat.index[bad_rows])
     return dat
 
 
@@ -79,7 +92,7 @@ def plot_events(dat):
     rcParams['figure.figsize'] = (17.5, 17)
     rcParams['figure.dpi'] = 250
 
-    dat.plot(kind='scatter', x='long', y='lat', color='white',
+    dat.plot(kind='scatter', x='long', y='lat', color='black',
              xlim=(-74.06, -73.77), ylim=(40.61, 40.91), s=.02, alpha=.6)
     plt.show()
 
@@ -90,7 +103,9 @@ def main():
     """
     dat = get_enigma_data(DATASET_ID, os.environ['ENIGMA_API_KEY'])
     event_data = pd.read_csv(io.StringIO(dat))
-    plot_events(get_coords(event_data))
+    dat = get_coords(event_data)
+    dat.to_csv('./events.csv')
+    plot_events(dat)
 
 
 
