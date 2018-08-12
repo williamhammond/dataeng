@@ -80,7 +80,8 @@ def main():
     """
     dat = get_enigma_data(DATASET_ID, os.environ['ENIGMA_API_KEY'])
     event_data = pd.read_csv(io.StringIO(dat))
-    overview(event_data)
+    dat = get_coords(event_data)
+    dat.to_csv('./data/processed/events.csv')
 
 
 if __name__ == "__main__":
