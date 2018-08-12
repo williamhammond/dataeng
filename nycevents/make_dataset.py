@@ -81,6 +81,7 @@ def main():
     """
     dat = get_enigma_data(DATASET_ID, os.environ['ENIGMA_API_KEY'])
     event_data = pd.read_csv(io.StringIO(dat))
+    event_data.to_csv('./data/raw/events.csv')
     dat = get_coords(event_data)
     dat.to_csv('./data/processed/events.csv')
 
