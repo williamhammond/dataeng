@@ -10,7 +10,7 @@ import pandas as pd
 from geopy import geocoders
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib import rcParams  
+from matplotlib import rcParams
 
 warnings.filterwarnings('ignore')
 
@@ -74,13 +74,13 @@ def plot_events(dat):
     """
     plot events displays a map of events
     """
-    new_style = {'grid': False} #Remove grid  
-    matplotlib.rc('axes', **new_style)  
+    new_style = {'grid': False}
+    matplotlib.rc('axes', **new_style)
     rcParams['figure.figsize'] = (17.5, 17)
     rcParams['figure.dpi'] = 250
 
     dat.plot(kind='scatter', x='long', y='lat', color='white',
-             xlim=(-74.06,-73.77), ylim=(40.61, 40.91), s=.02, alpha=.6)
+             xlim=(-74.06, -73.77), ylim=(40.61, 40.91), s=.02, alpha=.6)
     plt.show()
 
 
@@ -90,7 +90,7 @@ def main():
     """
     dat = get_enigma_data(DATASET_ID, os.environ['ENIGMA_API_KEY'])
     event_data = pd.read_csv(io.StringIO(dat))
-    plot_events(get_coords(event_data.head(2)))
+    plot_events(get_coords(event_data))
 
 
 
