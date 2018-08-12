@@ -9,6 +9,7 @@ from requests.exceptions import HTTPError
 import pandas as pd
 import geopy
 from geopy import geocoders
+from geopy.exc import GeocoderTimedOut
 
 DATASET_ID = 'f93ffd80-6679-4a76-a86e-2ab1f4007815'
 
@@ -66,8 +67,8 @@ def get_coords(dat):
             else:
                 dat.loc[i, 'long'] = location.longitude
                 dat.loc[i, 'lat'] = location.latitude
-        except Exception as e:
-            print e
+        except GeocoderTimedOut as err:
+            print "Error: geocode failed on %s with message %s"%(row['event_location'], err.message)
             bad_rows.append(i)
 
     # Remove rows that couldn't geocode due to bad event location
