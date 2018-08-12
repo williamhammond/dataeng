@@ -7,6 +7,7 @@ import warnings
 import requests
 from requests.exceptions import HTTPError
 import pandas as pd
+from geopy import geocoders
 
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
@@ -40,6 +41,20 @@ def get_enigma_data(dataset_id, api_key):
 
     return dat
 
+def get_coords(dat):
+    """
+    get_coords appends the coordinates as rows to the data set using the
+    google maps api
+    """
+    g_coder = geocoders.GoogleV3(os.environ['GOOGLE_API_KEY'])
+
+    locations = dat['event_location'].apply(g_coder.geocode)
+    dat.loc[:, 'long'] = [location.longitude for location in locations]
+    dat.loc[:, 'lat'] = [location.latitude for location in locations]
+
+    return dat
+
+
 def overview():
     """
     prints descriptive statistics for event data
@@ -49,13 +64,21 @@ def overview():
 
     print event_data["event_name"].value_counts()
     print event_data["event_agency"].value_counts()
+    print event_data["event_location"].value_counts()
+    print event_data["event_borough"].value_counts()
+    print event_data["event_type"].value_counts()
 
 
 def main():
     """
     request dataset of events happening in nyc
     """
-    overview()
+    #overview()
+    dat = get_enigma_data(DATASET_ID, os.environ['ENIGMA_API_KEY'])
+    event_data = pd.read_csv(io.StringIO(dat))
+    print get_coords(event_data.head(2))
+
+
 
 if __name__ == "__main__":
     main()
