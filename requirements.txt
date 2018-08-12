@@ -1,0 +1,4 @@
+geopy==1.16
+pandas==1.16.0
+matplotlib==2.2.3
+requests==2.18.4
